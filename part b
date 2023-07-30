@@ -1,0 +1,125 @@
+Program:1
+#include "LPC17xx.h"
+#define FOSC 12000000 /* oscillator frequency */
+#define FCCLK (FOSC * 8) /* master clock frequency <= 100Mhz */
+#define FCCO (FCCLK * 3) /* PLL frequency (275Mhz to 550Mhz) */
+#define FPCLK (FCCLK / 4) /* peripheral clock frequency */
+#define UART0_BPS 9600 /* Serial communication baud rate 9600 */
+void UART0_Init (void)
+{
+unsigned int usFdiv;
+LPC_PINCON->PINSEL0 |= (1 << 4); /* Pin P0.2 used as TXD0 (Com0) */
+LPC_PINCON->PINSEL0 |= (1 << 6); /* Pin P0.3 used as RXD0 (Com0) */
+LPC_UART0->LCR = 0x83; /* allows you to set the baud rate */
+usFdiv = (FPCLK / 16) / UART0_BPS; /* set the baud rate*/
+LPC_UART0->DLM = usFdiv / 256;
+LPC_UART0->DLL = usFdiv % 256; 
+LPC_UART0->LCR = 0x03; /* Lock the baud rate*/
+LPC_UART0->FCR = 0x06; 
+}
+int UART0_SendByte (int ucData) {
+while (!(LPC_UART0->LSR & 0x20));
+return (LPC_UART0->THR = ucData);
+}
+void UART0_SendString (unsigned char *s) 
+{
+while (*s != 0) 
+UART0_SendByte(*s++);
+}
+int main(void)
+{
+UART0_Init();
+UART0_SendString("HELLO WORLD !!!");
+UART0_SendByte(0x0D); UART0_SendByte(0x0A); //CR LF
+}
+
+PROGRAM 2
+Program:
+#include <lpc17xx.h>
+void delay()
+{
+int i,j;
+for(i=0;i<0x4000;i++)
+for(j=0;j<0x400;j++);
+} 
+int main (void)
+{
+LPC_GPIO0->FIODIR = 0x0000FF0; /* P2.xx defined as Outputs */
+LPC_GPIO0->FIOCLR = 0x0000FF0; /* turn off all the LEDs */
+while(1)
+{
+LPC_GPIO0->FIOSET = 0x0000FF0;
+delay();
+LPC_GPIO0->FIOCLR = 0x0000FF0;
+delay();
+} }
+
+PROGRAM 3
+PROGRAM:
+#include "lpc17xx.h“
+void delay()
+{
+int i,j;
+for(i=0;i<0x2000;i++)
+for(j=0;j<0x200;j++);
+}
+int main (void)
+{
+LPC_PINCON->PINSEL7 = 0X02000000;
+LPC_GPIO0->FIODIR = 0X02000000; 
+LPC_GPIO0->FIOCLR =0X02000000;
+while(1)
+{
+LPC_GPIO0->FIOSET =0X02000000;
+delay();
+LPC_GPIO0->FIOCLR = 0X02000000;
+delay();
+} }
+
+ROGRAM:5
+#include <LPC17xx.H>
+void delay(unsigned int count)
+{
+unsigned int j=0,i=0;
+for(j=0;j<count;j++)
+for(i=0;i<5000;i++);
+}
+int main (void)
+{
+unsigned int del=50;
+LPC_GPIO1->FIODIR = 0x03C00000;
+uint32_t i;
+while(1)
+{
+if (!(LPC_GPIO1->FIOPIN & (1<<14)))
+{
+for ( i=0; i<500; i++)
+{
+LPC_GPIO1->FIOPIN =0x02000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x01000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x00800000;
+delay(del);
+
+LPC_GPIO1->FIOPIN =0x00400000;
+delay(del);
+if (!(LPC_GPIO1->FIOPIN & (1<<15)))
+break; 
+}}
+if (!(LPC_GPIO1->FIOPIN & (1<<15)))
+{
+for ( i=0; i<500; i++)
+{
+LPC_GPIO1->FIOPIN =0x00400000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x00800000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x01000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x02000000;
+delay(del);
+if (!(LPC_GPIO1->FIOPIN & (1<<14)))
+break;
+}}
+} }
