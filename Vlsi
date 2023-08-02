@@ -1,0 +1,267 @@
+BUFFER 
+
+RTL CODE
+
+module buffer(a,b);
+
+input a;
+
+output b;
+
+wire ta;
+
+not(ta,a);
+
+not(b,ta);
+
+endmodule
+
+
+
+
+
+
+
+
+TEST BENCH
+
+module buffer_test;
+
+reg a;
+
+wire b;
+
+buffer my_buffer(a,b);
+
+initial 
+
+begin
+
+a=0;#100;
+
+a=1;#100;
+
+end
+
+endmodule
+
+D FLIP FLOP
+
+RTL CODE
+
+module dff(d,clk,q,qb);
+
+input d,clk;
+
+output reg q,qb;
+
+always@(posedge(clk))
+
+begin
+
+q=d;
+
+qb=~d;
+
+end
+
+endmodule
+
+TEST BENCH
+
+module ff_test;
+
+reg d,clk;
+
+wire q,qb;
+
+dff my_ff(d,clk,q,qb);
+
+initial
+
+clk=1'b1;
+
+always
+
+#5 clk=~clk;
+
+initial
+
+begin
+
+d=0;#10;
+
+d=1;#10;
+
+d=0;#10;
+
+d=1;#10;
+
+
+
+
+
+JK FLIP FLOP
+
+RTL CODE
+
+module jkff(j,k,clk,q,qb);
+
+input j,k,clk;
+
+output reg q,qb;
+
+reg kk=1'b0;
+
+reg[1:0] t;
+
+always@(posedge(clk))
+
+begin
+
+t={j,k};
+
+case(t)
+
+2'b00:kk=kk;
+
+2'b01:kk=1'b0;
+
+2'b10:kk=1'b1;
+
+2'b11:kk=~kk;
+
+default:;
+
+endcase
+
+q=kk;
+
+qb=~q;
+
+end
+
+endmodule
+
+TEST BENCH 
+
+module jkff_test;
+
+reg j,k,clk;
+
+wire q,qb;
+jkff my_ff(j,k,clk,q,qb);
+
+initial clk=1'b0;
+
+always
+
+#5 clk=~clk;
+
+initial
+
+begin
+
+j=0; k=0; #10;
+
+j=1; k=1; #20;
+
+j=0; k=1; #10;
+
+j=1; k=1; #20;
+
+j=1; k=0; #10;
+
+end
+
+endmodule
+
+MASTER SLAVE FLIP FLOP
+
+RTL CODE
+
+module ms_ff(j,k,clk,q,qb);
+
+input j,k,clk;
+
+output q,qb;
+
+jk_ff u1(j,k,clk,qm,qmb);
+
+jk_ff u2(qm,qmb,~clk,q,qb);
+
+endmodule
+
+JK FF RTL CODE
+
+module jk_ff(j,k,clk,q,qb);
+
+input j,k,clk;
+
+output reg q,qb;
+
+reg kk=1'b0;
+
+reg[1:0]t;
+
+always@(posedge(clk))
+
+begin
+
+t={j,k};
+
+case(t)
+
+2'b00:kk=kk;
+
+2'b01:kk=1'b0;
+
+2'b10:kk=1'b1;
+
+2'b11:kk=~kk;
+
+default: ;
+
+endcase
+
+q=kk;
+
+qb=~q;
+
+end
+
+endmodule
+
+TEST BENCH
+
+module ms_test;
+
+reg j,k,clk;
+
+wire q,qb;
+
+ms_ff my_ff1(j,k,clk,q,qb);
+
+initial
+
+clk=1'b0;
+
+always
+
+#5 clk=~clk;
+
+initial
+
+begin
+
+j=0;k=0;#10;
+
+j=0;k=1;#10;
+
+j=1;k=0;#10;
+
+j=1;k=1;#10;
+
+end
+
+endmodule
