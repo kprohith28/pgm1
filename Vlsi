@@ -265,3 +265,28 @@ j=1;k=1;#10;
 end
 
 endmodule
+
+SR FLIP FLOP
+
+
+RTL CODE
+module srff(s,r,q,qb);
+input s,r;
+output reg q,qb;
+reg st=1'b0;
+reg[1:0]k;
+always@(s,r)
+begin
+k={s,r};
+case(k)
+
+2'b00:st=st;
+2'b01:st=1'b0;
+2'b10:st=1'b1;
+2'b11:st=1'bz;
+default:;
+endcase
+q=st;
+qb=~q;
+end
+endmodule
